@@ -39,10 +39,10 @@ const Rating = sequelize.define('rating', {
   rate: { type: DataTypes.INTEGER, allowNull: false },
 });
 
-const DeviceInfo = sequelize.define('device_info', {
+const DeviceInfo = sequelize.define('device_information', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  title: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.STRING, allowNull: false },
+  highlights: { type: DataTypes.STRING, allowNull: false },
 });
 
 const TypeBrand = sequelize.define('type_brand', {
@@ -84,5 +84,6 @@ module.exports = {
   Type,
   Brand,
   Rating,
+  TypeBrand,
   DeviceInfo,
 };
