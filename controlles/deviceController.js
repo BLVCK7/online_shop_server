@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 const path = require('path');
-const { Device, DeviceInfo } = require('../models/models');
+const { Device, DeviceInfo, Brand, Type } = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 class DeviceController {
@@ -37,19 +37,54 @@ class DeviceController {
     let devices;
 
     if (!brandId && !typeId) {
-      devices = await Device.findAndCountAll({ limit, offset });
+      devices = await Device.findAndCountAll({
+        include: [
+          {
+            model: Brand,
+          },
+        ],
+        limit,
+        offset,
+      });
     }
 
     if (brandId && !typeId) {
-      devices = await Device.findAndCountAll({ where: { brandId }, limit, offset });
+      devices = await Device.findAndCountAll({
+        include: [
+          {
+            model: Brand,
+          },
+        ],
+        where: { brandId },
+        limit,
+        offset,
+      });
     }
 
     if (!brandId && typeId) {
-      devices = await Device.findAndCountAll({ where: { typeId }, limit, offset });
+      devices = await Device.findAndCountAll({
+        include: [
+          {
+            model: Brand,
+          },
+        ],
+        where: { typeId },
+        limit,
+        offset,
+      });
     }
 
     if (brandId && typeId) {
-      devices = await Device.findAndCountAll({ where: { typeId, brandId }, limit, offset });
+      devices = await Device.findAndCountAll({
+        include: [
+          {
+            model: Brand,
+          },
+        ],
+        where: { typeId, brandId },
+        limit,
+        offset,
+      });
     }
     return res.json(devices);
   }
@@ -58,7 +93,7 @@ class DeviceController {
     const { id } = req.params;
     const device = await Device.findOne({
       where: { id },
-      include: [{ model: DeviceInfo, as: 'info' }],
+      include: [{ model: DeviceInfo, as: 'info' }, { model: Brand }, { model: Type }],
     });
     return res.json(device);
   }
