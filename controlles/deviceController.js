@@ -43,6 +43,12 @@ class DeviceController {
             model: DeviceInfo,
             as: 'info',
           },
+          {
+            model: Type,
+          },
+          {
+            model: Brand,
+          },
         ],
       });
 
@@ -54,20 +60,23 @@ class DeviceController {
 
   async update(req, res, next) {
     try {
-      let { name, price, brandId, typeId, info } = req.body;
-      const { img } = req.files;
-      let fileName = uuid.v4() + '.jpg';
-      img.mv(path.resolve(__dirname, '..', 'static', fileName));
+      let { deviceId, name, price, brandId, typeId, info } = req.body;
+
+      // if (req.files.img !== null) {
+      //   const { img } = req.files;
+      //   let fileName = uuid.v4() + '.jpg';
+      //   img.mv(path.resolve(__dirname, '..', 'static', fileName));
+      //   return fileName;
+      // }
+
       const device = await Device.update(
-        { name, price, brandId, typeId, img: fileName },
+        { name: name, price: price, brandId: brandId, typeId: typeId },
         {
           where: {
-            name,
-            price,
-            brandId,
-            typeId,
-            img: fileName,
+            id: deviceId,
           },
+          returning: true,
+          plain: true,
         },
       );
 
@@ -78,10 +87,11 @@ class DeviceController {
             {
               description: i.description,
               highlights: i.highlights,
-              deviceId: device.id,
             },
             {
-              where: { description: i.description, highlights: i.highlights, deviceId: device.id },
+              where: {
+                id: deviceId,
+              },
             },
           ),
         );
